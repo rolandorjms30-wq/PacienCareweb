@@ -1,0 +1,881 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PacienCare - Panel de Administración</title>
+
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}?">
+    <link rel="stylesheet" href="{% static 'css/graficos.css' %}?">
+
+
+</head>
+
+<body>
+
+    <div class="layout">
+
+        <!-- ===== SIDEBAR ===== -->
+        <aside class="sidebar" id="sidebar">
+
+            <div class="sidebar-logo">
+                <span class="logo-icono">⚙</span>
+                <span class="logo-texto">PacienCare</span>
+            </div>
+
+            <nav class="sidebar-nav">
+
+                <a href="#" class="nav-link activo" data-seccion="dashboard">
+                    <span class="nav-icono">📊</span>
+                    <span>Dashboard</span>
+                </a>
+
+                <a href="#" class="nav-link" data-seccion="pacientes">
+                    <span class="nav-icono">👥</span>
+                    <span>Pacientes</span>
+                </a>
+
+                <a href="#" class="nav-link" data-seccion="medicos">
+                    <span class="nav-icono">🩺</span>
+                    <span>Medicos</span>
+                </a>
+
+                <a href="#" class="nav-link" data-seccion="citasmedicas">
+                    <span class="nav-icono">📅 </span>
+                    <span>Citas Medicas</span>
+                </a>
+
+                <a href="#" class="nav-link" data-seccion="medicamentos">
+                    <span class="nav-icono">💊 </span>
+                    <span>Medicamentos</span>
+                </a>
+
+                <a href="#" class="nav-link" data-seccion="resultadosExamenes">
+                    <span class="nav-icono">🧪 </span>
+                    <span>Resultados De Examenes</span>
+                </a>
+
+
+            </nav>
+            
+            <div class="sidebar-footer">
+                <span class="api-badge">
+                    🌐 Sistema Clinico
+                </span>
+            </div>
+
+        </aside>
+
+        <!-- ===== CONTENIDO PRINCIPAL ===== -->
+        <div class="main-wrap">
+
+            <!-- TOPBAR -->
+            <header class="topbar">
+                <h1 class="topbar-titulo" id="topbarTitulo">Dashboard</h1>
+                
+                <div class="topbar-derecha">
+                    <span class="estado-api" id="estadoApi">
+                        Conectando...
+                    </span>
+                </div>
+            </header>
+
+            <!-- CONTENIDO -->
+            <main class="contenido">
+
+                <!-- ===== DASHBOARD ===== -->
+                <section id="dashboard" class="seccion activa">
+
+                    <div class="tarjetas">
+
+                        <div class="tarjeta tarjeta-azul">
+                            <div class="tarjeta-icono">👥</div>
+                            <div class="tarjeta-datos">
+                                <p class="tarjeta-etiqueta">Total Pacientes</p>
+                                <p class="tarjeta-numero" id="totalPacientes">—</p>
+                            </div>
+                        </div>
+
+                        <div class="tarjeta tarjeta-verde">
+                            <div class="tarjeta-icono">🩺</div>
+                            <div class="tarjeta-datos">
+                                <p class="tarjeta-etiqueta">Total Médicos</p>
+                                <p class="tarjeta-numero" id="totalMedicos">—</p>
+                            </div>
+                        </div>
+
+                        <div class="tarjeta tarjeta-amarillo">
+                            <div class="tarjeta-icono">📅</div>
+                            <div class="tarjeta-datos">
+                                <p class="tarjeta-etiqueta">Total Citas Medica</p>
+                                <p class="tarjeta-numero" id="totalCitasMedicas">—</p>
+                            </div>
+                        </div>
+
+                        <div class="tarjeta tarjeta-rojo">
+                            <div class="tarjeta-icono">💊</div>
+                            <div class="tarjeta-datos">
+                                <p class="tarjeta-etiqueta">Total Medicamentos</p>
+                                <p class="tarjeta-numero" id="totalMedicamentos">—</p>
+                            </div>
+                        </div>
+
+                        <div class="tarjeta tarjeta-morado">
+                            <div class="tarjeta-icono">🧪</div>
+                            <div class="tarjeta-datos">
+                                <p class="tarjeta-etiqueta">Total Resultados-Examenes</p>
+                                <p class="tarjeta-numero" id="totalResultadosExamenes">—</p>
+                            </div>
+                        </div>
+                        
+
+                    </div>
+
+                    <div class="bienvenida">
+                        <h2>¡Bienvenido al panel de administración!</h2>
+                        <p>
+                            SISTEMA CLÍNICO PARA PACIENTES CRONICOS
+                        </p>
+                    </div> 
+                   
+                    <div class="graficos-grid">
+
+
+                        <div class="grafico-box">
+
+                       
+                        <h3>Pacientes por mes </h3>
+                        <canvas id="graficoPacientes"></canvas>
+
+                        </div>
+
+
+                        <!-- ── GRÁFICO 2: Línea con área ── -->
+                        <div class="grafico-box">
+                        <h3>Citas Por Medicos</h3>
+                        <canvas id="graficoCitas"></canvas>
+                        </div>
+
+
+                        <!-- ── GRÁFICO 3: Dona (doughnut) ── -->
+                        <div class="grafico-box">
+                        <h3>Examenes por mes</h3>
+                        <canvas id="graficoExamenes"></canvas>
+                        </div>
+
+
+                        <!-- ── GRÁFICO 4: Barras horizontales ── -->
+                        <div class="grafico-box">
+                        <h3>Medicamentos por Mes</h3>
+                        <canvas id="graficoMedicamentos"></canvas>
+                        </div>
+
+
+                    </div>
+
+                </section>
+
+                
+
+              
+                <!-- ===== PACIENTES ===== -->
+                <section id="pacientes" class="seccion">
+
+                    <div class="tabla-contenedor">
+
+                        <div class="tabla-cabecera">
+
+                            <input
+                                type="text"
+                                id="buscarPacientes"
+                                class="buscador"
+                                placeholder="🔍 Buscar Pacientes...">
+
+                            <button
+                                class="btn btn-primario"
+                                onclick="abrirModalPacientes('crear')">
+                                + Nuevo Paciente
+                            </button>
+
+                        </div>
+
+                        <div class="cargando" id="cargandoPacientes">
+                            ⏳ Cargando datos...
+                        </div>
+
+                        <table class="tabla" id="tablaPacientes">
+
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Nombres</th>
+                                    <th>Apellidos</th>
+                                    <th>Edad</th>
+                                    <th>Sexo</th>
+                                    <th>Fecha Nacimiento</th>
+                                    <th>Patología</th>
+                                    <th>Dirección</th>
+                                    <th>Teléfono</th>
+                                    <th>Email</th>
+                                    <th>Estado</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+
+                            <tbody id="bodyPacientes"></tbody>
+
+                        </table>
+
+                    </div>
+
+                </section>
+
+                <!-- ===== MEDICOS ===== -->
+                <section id="medicos" class="seccion">
+
+                    <div class="tabla-contenedor">
+
+                        <div class="tabla-cabecera">
+
+                            <input
+                                type="text"
+                                id="buscarMedicos"
+                                class="buscador"
+                                placeholder="🔍 Buscar Medicos...">
+
+                            <button
+                                class="btn btn-primario"
+                                onclick="abrirModalMedicos('crear')">
+                                + Nuevo Medico
+                            </button>
+
+                        </div>
+
+                        <div class="cargando" id="cargandoMedicos">
+                            ⏳ Cargando datos...
+                        </div>
+
+                        <table class="tabla" id="tablaMedicos">
+
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Codigo Minsa</th>
+                                    <th>Nombres</th>
+                                    <th>Apellidos</th>
+                                    <th>Especialidad</th>
+                                    <th>Teléfono</th>
+                                    <th>Email</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+
+                            <tbody id="bodyMedicos"></tbody>
+
+                        </table>
+
+                    </div>
+
+                </section>
+
+                <!-- ===== CITAS MEDICAS ===== -->
+                <section id="citasmedicas" class="seccion">
+
+                    <div class="tabla-contenedor">
+
+                        <div class="tabla-cabecera">
+
+                            <input
+                                type="text"
+                                id="buscarCitasMedicas"
+                                class="buscador"
+                                placeholder="🔍 Buscar Citas Medicas...">
+
+                            <button
+                                class="btn btn-primario"
+                                onclick="abrirModalCitasMedicas('crear')">
+                                + Nueva Cita
+                            </button>
+
+                        </div>
+
+                        <div class="cargando" id="cargandoCitasMedicas">
+                            ⏳ Cargando datos...
+                        </div>
+
+                        <table class="tabla" id="tablaCitasMedicas">
+
+                            <thead>
+                                <tr>
+                                    <th>Paciente</th>
+                                    <th>Medico</th>
+                                    <th>Fecha Hora</th>
+                                    <th>Motivo</th>
+                                    <th>Estado</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+
+                            <tbody id="bodyCitasMedicas"></tbody>
+
+                        </table>
+
+                    </div>
+
+                </section>
+
+
+
+                <!-- =====  MEDICAAMENTOS ===== -->
+                <section id="medicamentos" class="seccion">
+
+                    <div class="tabla-contenedor">
+
+                        <div class="tabla-cabecera">
+
+                            <input
+                                type="text"
+                                id="buscarMedicamentos"
+                                class="buscador"
+                                placeholder="🔍 Buscar Medicamentos...">
+
+                            <button
+                                class="btn btn-primario"
+                                onclick="abrirModalMedicamentos('crear')">
+                                + Nuevo Medicamento
+                            </button>
+
+                        </div>
+
+                        <div class="cargando" id="cargandoMedicamentos">
+                            ⏳ Cargando datos...
+                        </div>
+
+                        <table class="tabla" id="tablaMedicamentos">
+
+                            <thead>
+                                <tr>
+                                    <th>Nombre </th>
+                                    <th>Paciente</th>
+                                    <th>Medico</th>
+                                    <th>Fecha prescripcion</th>
+                                    <th>Descripcion</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+
+                            <tbody id="bodyMedicamentos"></tbody>
+
+                        </table>
+
+                    </div>
+
+                </section>
+
+
+                <!-- =====  Resultados Examenes ===== -->
+                <section id="resultadosExamenes" class="seccion">
+
+                    <div class="tabla-contenedor">
+
+                        <div class="tabla-cabecera">
+
+                            <input
+                                type="text"
+                                id="buscarResultadosExamenes"
+                                class="buscador"
+                                placeholder="🔍 Buscar Resultados...">
+
+                            <button
+                                class="btn btn-primario"
+                                onclick="abrirModalResultadosExamenes('crear')">
+                                + Nuevo Resultados
+                            </button>
+
+                        </div>
+
+                        <div class="cargando" id="cargandoResultadosExamenes">
+                            ⏳ Cargando datos...
+                        </div>
+
+                        <table class="tabla" id="tablaResultadosExamenes">
+
+                            <thead>
+                                <tr>
+                                    <th>Paciente</th>
+                                    <th>Medico</th>
+                                    <th>Nombre Examen</th>
+                                    <th>Resultado</th>
+                                    <th>Fecha</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+
+                            <tbody id="bodyResultadosExamenes"></tbody>
+
+                        </table>
+
+                    </div>
+
+                </section>
+
+            </main> 
+
+        
+        </div>
+
+
+        
+        <div class="modal-overlay" id="modalPacientes">
+
+            <div class="modal">
+
+                <div class="modal-header">
+                    <h3 id="modalPacTitulo">Nuevo Paciente</h3>
+
+                    <button onclick="cerrarModal('modalPacientes')">
+                        ✖
+                    </button>
+                </div>
+
+                <div class="modal-body">
+
+                    <input id="nomPaciente"
+                        class="form-input"
+                        placeholder="Nombres">
+
+                    <input id="apePaciente"
+                        class="form-input"
+                        placeholder="Apellidos">
+
+                    <select id="sexoPaciente"
+                            class="form-input">
+                        <option value="">Seleccione</option>
+                        <option value="M">Masculino</option>
+                        <option value="F">Femenino</option>
+                        <option value="O">Otro</option>
+                        
+                    </select>
+
+                    <input type="date"
+                        id="fechaNacimiento"
+                        class="form-input">
+
+                    <div style="margin-bottom: 12px; 
+                       text-align: left;">
+                        <label style="display:
+                            block; font-size: 13px; 
+                            color: #555; 
+                            margin-bottom: 4px;
+                            font-weight: bold;">
+                            Patologías Crónicas (Seleccione una o varias):
+                        </label>
+                        <div id="contenedorPatologias" 
+                            style="max-height: 110px; 
+                            overflow-y: auto; 
+                            border: 1px 
+                            solid #ccc; 
+                            padding: 6px 10px; 
+                            border-radius: 4px; 
+                            background: #fff;">
+
+                            <label style="display:
+                                block; margin-bottom: 4px; 
+                                font-size: 13px; 
+                                color: #333; cursor:
+                                pointer;">
+
+                                <input 
+                                    type="checkbox"
+                                    name="patologias_chk"
+                                    value="Diabetes"> Diabetes
+                            </label>
+
+                            <label style="display: 
+                                block; 
+                                margin-bottom: 4px; 
+                                font-size: 13px; color: #333; 
+                                cursor: pointer;">
+
+                                <input 
+                                    type="checkbox" 
+                                    name="patologias_chk" 
+                                    value="Hipertensión Arterial"> Hipertensión Arterial
+                            </label>
+
+                            <label style="display: 
+                                block; 
+                                margin-bottom: 4px; 
+                                font-size: 13px; 
+                                color: #333; 
+                                cursor: pointer;">
+
+                                <input 
+                                    type="checkbox"
+                                     name="patologias_chk" 
+                                     value="Asma Crónica"> Asma Crónica
+
+                                
+
+                                
+
+                            </label>
+
+                            <label style="display: 
+                                block; 
+                                margin-bottom: 4px; 
+                                font-size: 13px; 
+                                color: #333; 
+                                cursor: pointer;">
+
+                                <input 
+                                    type="checkbox" 
+                                    name="patologias_chk" 
+                                    value="EPOC"> EPOC
+                            </label>
+                            <label style="display: 
+                                block; 
+                                margin-bottom: 4px; 
+                                font-size: 13px; 
+                                color: #333; 
+                                cursor: pointer;">
+                                <input 
+                                    type="checkbox"
+                                    name="patologias_chk" 
+                                    value="Insuficiencia Renal"> Insuficiencia Renal
+
+                            </label>
+
+                            <label style="display:
+                                block;
+                                margin-bottom: 4px; 
+                                font-size: 13px; 
+                                color: #333; 
+                                cursor: pointer;">
+
+                                <input 
+                                    type="checkbox"
+                                    name="patologias_chk"
+                                     value="Obesidad"> Obesidad
+
+                            </label>
+                        </div>
+                    </div>
+
+                    <input id="direccionPaciente"
+                        class="form-input"
+                        placeholder="Dirección">
+
+                    <input id="telefonoPaciente"
+                        class="form-input"
+                        placeholder="Teléfono">
+
+                    <input id="emailPaciente"
+                        class="form-input"
+                        placeholder="Email">
+
+                    <div style="margin-bottom: 12px; 
+                        text-align: 
+                        left;">
+                        <label style="display: 
+                            block; 
+                            font-size: 13px; 
+                            color: #555; 
+                            margin-bottom: 4px; 
+                            font-weight: bold;">
+                            Estado del Paciente:
+
+                        </label>
+
+                        <select id="activoPaciente" class="form-input">
+                            <option value="true">Activo</option>
+                            <option value="false">Inactivo</option>
+                        </select>
+                    </div>
+
+                </div>
+
+                <div class="modal-footer">
+
+                    <span id="pacienteError"
+                        style="color:red"></span>
+
+                    <button class="btn"
+                        onclick="cerrarModal('modalPacientes')">
+                        Cancelar
+                    </button>
+
+                    <button class="btn btn-primario"
+                        onclick="guardarPacientes()">
+                        Guardar
+                   </button>
+                </div> 
+            </div>
+
+        </div>
+
+
+
+
+        <div class="modal-overlay" id="modalMedicos">
+
+            <div class="modal">
+
+                <div class="modal-header">
+                    <h3 id="modalMedTitulo">Nuevo Medico</h3>
+
+                    <button onclick="cerrarModal('modalMedicos')">
+                        ✖
+                    </button>
+                </div>
+
+                <div class="modal-body">
+
+
+                    <input id="codigo_minsa"
+                        class="form-input"
+                        placeholder="Codigo Minsa">
+
+                    <input id="nomMedicos"
+                        class="form-input"
+                        placeholder="Nombres">
+
+                    <input id="apeMedicos"
+                        class="form-input"
+                        placeholder="Apellidos">
+
+                    <input id="especialidad"
+                        class="form-input"
+                        placeholder="especialidad">
+
+                    
+                    <input id="telefonoMedicos"
+                        class="form-input"
+                        placeholder="Teléfono">
+
+                    <input id="emailMedicos"
+                        class="form-input"
+                        placeholder="Email">
+
+                </div>
+
+                <div class="modal-footer">
+
+                    <span id="MedicosError"
+                        style="color:red"></span>
+
+                    <button class="btn"
+                        onclick="cerrarModal('modalMedicos')">
+                        Cancelar
+                    </button>
+
+                    <button class="btn btn-primario"
+                        onclick="guardarMedicos()">
+                        Guardar
+                    </button>
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+
+        <div class="modal-overlay" id="modalCitasMedicas">
+
+            <div class="modal">
+
+                <div class="modal-header">
+                    <h3 id="modalCMTitulo">Nueva Cita</h3>
+
+                    <button onclick="cerrarModal('modalCitasMedicas')">
+                        ✖
+                    </button>
+                </div>
+
+                <div class="modal-body">
+
+                    <select id="nomCitasMedicas" class="form-input">
+                        <option value="">-- Seleccione Paciente --</option>
+                    </select>
+
+                    <select id="cdCitasMedicas" class="form-input">
+                        <option value="">-- Seleccione Médico --</option>
+                    </select>
+
+                    <input type="datetime-local" id="fecha_hora" class="form-input">
+
+                    <input id="motivo"
+                        class="form-input"
+                        placeholder="Motivo">
+
+                    <select id="atendidaCita" class="form-input">
+                        <option value="false">❌ Pendiente (No Atendida)</option>
+                        <option value="true">✔ Atendida</option>
+                    </select>
+
+                
+                </div>
+
+                <div class="modal-footer">
+
+                    <span id="CitasMedicasError"
+                        style="color:red"></span>
+
+                    <button class="btn"
+                        onclick="cerrarModal('modalCitasMedicas')">
+                        Cancelar
+                    </button>
+
+                    <button class="btn btn-primario"
+                        onclick="guardarCitasMedicas()">
+                        Guardar
+                    </button>
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+
+        <div class="modal-overlay" id="modalMedicamentos">
+
+            <div class="modal">
+
+                <div class="modal-header">
+                    <h3 id="modalMTitulo">Nuevo Medicamento</h3>
+
+                    <button onclick="cerrarModal('modalMedicamentos')">
+                        ✖
+                    </button>
+                </div>
+
+                <div class="modal-body">
+
+                    <select id="nomMedicamentos" class="form-input">
+                        <option value="">-- Seleccione Paciente--</option>
+                    </select>
+
+                    <select id="mdMedicamentos" class="form-input">
+                        <option value="">-- Seleccione Médico --</option>
+                    </select>
+
+
+                    <input id="nombre"
+                        class="form-input"
+                        placeholder="Nombre">
+
+                    <input type="date" id="fecha_prescripcion" class="form-input">
+
+                    <input id="descripcion" class="form-input" placeholder="Descripción">
+
+                
+                </div>
+
+                <div class="modal-footer">
+
+                    <span id="MedicamentosError"
+                        style="color:red"></span>
+
+                    <button class="btn"
+                        onclick="cerrarModal('modalMedicamentos')">
+                        Cancelar
+                    </button>
+
+                    <button class="btn btn-primario"
+                        onclick="guardarMedicamentos()">
+                        Guardar
+                    </button>
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+
+
+        <div class="modal-overlay" id="modalResultadosExamenes">
+
+            <div class="modal">
+
+                <div class="modal-header">
+                    <h3 id="modalRETitulo">Nuevo Resultados</h3>
+
+                    <button onclick="cerrarModal('modalResultadosExamenes')">
+                        ✖
+                    </button>
+                </div>
+
+                <div class="modal-body">
+
+                    <select id="nomResultadosExamenes" class="form-input">
+                        <option value="">-- Seleccione Paciente --</option>
+                    </select>
+
+                    <select id="cdResultadosExamenes" class="form-input">
+                        <option value="">-- Seleccione Médico --</option>
+                    </select>
+
+                    <input type="date" id="fecha" class="form-input">
+
+                    <input id="nombre_examen"
+                        class="form-input"
+                        placeholder="Nombre_Examen">
+
+                    <input id="resultado"
+                        class="form-input"
+                        placeholder="Resultado">
+
+                
+                </div>
+
+                <div class="modal-footer">
+
+                    <span id="ResultadosExamenesError"
+                        style="color:red"></span>
+
+                    <button class="btn"
+                        onclick="cerrarModal('modalResultadosExamenes')">
+                        Cancelar
+                    </button>
+
+                    <button class="btn btn-primario"
+                        onclick="guardarResultadosExamenes()">
+                        Guardar
+                    </button>
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+
+    </div>
+     </div>
+        
+    </div>
+
+
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  
+  
+   <script src="/static/js/graficos.js"></script>
+
+
+ <script src="/static/js/crud.js"></script>
+
+  
+
+    <script src="/static/js/app-Dashboard.js"></script>
+</body>
+</html>

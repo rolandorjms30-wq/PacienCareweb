@@ -1,0 +1,8 @@
+from rest_framework import serializers
+from ..models import  Pacientes
+
+class PacientesSerializers(serializers.ModelSerializer):
+
+    class Meta:
+        model = Pacientes
+        fields = '__all__' 

@@ -1,0 +1,25 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>PacienCare - Sistema</title>
+  <link rel="stylesheet" href="{% static 'css/estilo.css' %}">
+
+<body class="body-login" id="cuerpoPrincipal">
+
+    <div class="modal-content" id="login-section">
+        <h3>Iniciar Sesión</h3>
+        <form id="loginForm">
+            {% csrf_token %}
+            <input type="text" id="usuario" placeholder="Usuario" required>
+            <input type="password" id="password" placeholder="Contraseña" required>
+            <button type="submit">INGRESAR</button>
+        </form>
+    </div>
+
+
+    <script src="{% static 'js/app.js' %}"></script>
+  
+</body>
+</html>

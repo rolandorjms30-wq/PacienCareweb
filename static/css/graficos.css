@@ -1,0 +1,87 @@
+/* ====================================================
+   graficos.css
+   Estilos exclusivos del dashboard de gráficos.
+   Se carga en index.html junto con estilos.css.
+   Usa las mismas variables CSS definidas en estilos.css (:root)
+   porque ambos archivos se cargan en la misma página.
+==================================================== */
+
+
+/* .graficos-grid es el contenedor que envuelve las 4 cajas de gráficos */
+.graficos-grid {
+
+  display: grid;
+  /* display:grid activa CSS Grid Layout.
+     Grid divide el espacio en filas y columnas como una tabla,
+     pero mucho más flexible. Sin esto, las cajas irían una encima de la otra. */
+
+  grid-template-columns: 1fr 1fr;
+  /* Define CUÁNTAS columnas tiene la cuadrícula y qué tan anchas son.
+     "1fr" significa "1 fracción del espacio disponible".
+     "1fr 1fr" = 2 columnas, cada una ocupa la mitad del ancho total.
+     Si escribieras "1fr 1fr 1fr" serían 3 columnas.
+     Si escribieras "2fr 1fr" la primera columna sería el doble de ancha. */
+
+  gap: 20px;
+  /* Espacio de 20px entre cada caja (tanto horizontal como vertical).
+     Sin gap, las cajas quedarían pegadas unas a otras. */
+}
+
+
+/* .grafico-box es la caja oscura que contiene UN gráfico */
+.grafico-box {
+
+  background: var(--fondo2);
+  /* Color de fondo de la caja. var(--fondo2) es una variable CSS definida
+     en :root dentro de estilos.css. Su valor es #1e293b (azul oscuro).
+     Las variables de estilos.css están disponibles aquí porque ambos
+     archivos se cargan en la misma página. */
+
+  border: 1px solid var(--borde);
+  /* Borde de 1px alrededor de la caja.
+     var(--borde) = rgba(255,255,255,0.06): blanco casi invisible.
+     Crea un borde sutil que separa visualmente la caja del fondo. */
+
+  border-radius: var(--radio);
+  /* Redondea las 4 esquinas de la caja.
+     var(--radio) = 12px. Sin esto, las esquinas serían rectas (90°). */
+
+  padding: 22px;
+  /* Espacio INTERIOR de 22px en los 4 lados.
+     El padding separa el contenido (título + canvas) del borde de la caja.
+     Sin padding, el gráfico quedaría pegado al borde. */
+}
+
+
+/* Estilo del título que aparece arriba de cada gráfico */
+.grafico-box h3 {
+
+  font-size: 11px;
+  /* Tamaño muy pequeño para que el título no compita visualmente
+     con el gráfico. El gráfico es el protagonista. */
+
+  color: var(--texto2);
+  /* Color gris azulado (#94a3b8). Es un gris claro sobre fondo oscuro.
+     var(--texto) sería blanco puro; var(--texto2) es más sutil. */
+
+  text-transform: uppercase;
+  /* Convierte todo el texto a MAYÚSCULAS automáticamente.
+     No cambia el HTML, solo la visualización.
+     Ej: "ventas por mes" → "VENTAS POR MES" */
+
+  letter-spacing: 0.8px;
+  /* Aumenta el espacio entre cada letra en 0.8px.
+     Junto con uppercase crea el estilo de "etiqueta técnica"
+     que se usa mucho en dashboards profesionales. */
+
+  font-weight: 700;
+  /* Grosor de la fuente: 700 = negrita.
+     La escala va de 100 (muy delgada) a 900 (extra negrita).
+     400 es normal, 700 es negrita estándar. */
+
+  margin-bottom: 18px;
+  /* Espacio de 18px DEBAJO del título, antes del gráfico.
+     Sin esto, el título quedaría pegado al canvas del gráfico. */
+}
+
+
